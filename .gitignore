@@ -1,0 +1,21 @@
+# Binaries
+go2rtc
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+env/
+venv/
+
+# Backup & editor swap files
+*~
+*.swp
+*.swo
+\#*\#
+
+# System & logs
+*.log
+.DS_Store
