@@ -1,4 +1,18 @@
+api:
+  listen: "0.0.0.0:1984"
+
+rtsp:
+  listen: "0.0.0.0:8554"
+
+webrtc:
+  listen: "0.0.0.0:8555"
+  candidates:
+    - "100.68.193.42:8555"
+
 streams:
-  solocam1: []
-  solocam2: []
-  doorbell: []
+  solocam1:
+    - exec:ffmpeg -hide_banner -loglevel warning -re -fflags +genpts+nobuffer -f hevc -r 15 -i tcp://127.0.0.1:9001 -c:v copy -an -f rtsp {output}
+  solocam2:
+    - exec:ffmpeg -hide_banner -loglevel warning -re -fflags +genpts+nobuffer -f hevc -r 15 -i tcp://127.0.0.1:9002 -c:v copy -an -f rtsp {output}
+  doorbell:
+    - exec:ffmpeg -hide_banner -loglevel warning -re -fflags +genpts+nobuffer -f h264 -r 15 -i tcp://127.0.0.1:9003 -c:v copy -an -f rtsp {output}
