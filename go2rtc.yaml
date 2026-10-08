@@ -10,9 +10,18 @@ webrtc:
     - "100.68.193.42:8555"
 
 streams:
+  # SoloCams hand H.265 to go2rtc as MPEG-TS on a pipe: via RTSP their large keyframes
+  # came out corrupted in go2rtc's browser (MSE) output - the green, mangled picture.
   solocam1:
-    - exec:ffmpeg -hide_banner -loglevel warning -re -fflags +genpts+nobuffer -f hevc -r 15 -i tcp://127.0.0.1:9001 -c:v copy -an -f rtsp {output}
+    - exec:ffmpeg -hide_banner -loglevel warning -re -fflags +genpts+nobuffer -f hevc -r 15 -i tcp://127.0.0.1:9001 -c:v copy -an -f mpegts -
   solocam2:
-    - exec:ffmpeg -hide_banner -loglevel warning -re -fflags +genpts+nobuffer -f hevc -r 15 -i tcp://127.0.0.1:9002 -c:v copy -an -f rtsp {output}
+    - exec:ffmpeg -hide_banner -loglevel warning -re -fflags +genpts+nobuffer -f hevc -r 15 -i tcp://127.0.0.1:9002 -c:v copy -an -f mpegts -
   doorbell:
     - exec:ffmpeg -hide_banner -loglevel warning -re -fflags +genpts+nobuffer -f h264 -r 15 -i tcp://127.0.0.1:9003 -c:v copy -an -f rtsp {output}
+  # H.264 copies of the SoloCams for browsers that can't play H.265 (the Pi's own screen, Brave on Linux).
+  # They read the bridge directly: go2rtc's "ffmpeg:solocam1" shortcut gives up before a sleeping camera wakes.
+  solocam1_h264:
+    - exec:ffmpeg -hide_banner -loglevel warning -fflags +genpts+nobuffer -f hevc -r 15 -i tcp://127.0.0.1:9001 -c:v libx264 -preset superfast -x264-params sliced-threads=0:rc-lookahead=0:sync-lookahead=0 -g 30 -bf 0 -vf scale=1280:-2 -an -f rtsp {output}
+  solocam2_h264:
+    - exec:ffmpeg -hide_banner -loglevel warning -fflags +genpts+nobuffer -f hevc -r 15 -i tcp://127.0.0.1:9002 -c:v libx264 -preset superfast -x264-params sliced-threads=0:rc-lookahead=0:sync-lookahead=0 -g 30 -bf 0 -vf scale=1280:-2 -an -f rtsp {output}
+  driveway: rtsp://admin:${CAM_PASS}@10.0.0.240:554/h264Preview_01_sub

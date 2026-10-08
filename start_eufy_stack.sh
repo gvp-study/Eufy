@@ -81,8 +81,10 @@ done
 echo "[+] go2rtc ready on RTSP :8554 (Web dashboard: http://localhost:1984)."
 
 # 3. Launch Python RTSP pipeline
+sleep 10
+sleep 15
 echo "[3/3] Launching Python RTSP pipeline..."
-"$PYTHON_ENV" "$BRIDGE_SCRIPT" &
+"$PYTHON_ENV" -u "$BRIDGE_SCRIPT" &
 BRIDGE_PID=$!
 
 echo "=================================================="
