@@ -19,3 +19,7 @@ venv/
 # System & logs
 *.log
 .DS_Store
+
+# Eufy runtime state: holds account session tokens and keys - never commit
+data/
+data_backup_working/
